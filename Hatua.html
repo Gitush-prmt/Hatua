@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #0f0e0c; color: #f0ebe0;
+    font-family: 'Inter', sans-serif;
+    height: 100%; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  header {
+    border-bottom: 1px solid #2a2720;
+    background: #0f0e0c;
+    flex-shrink: 0;
+  }
+  .header-inner {
+    max-width: 760px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo-group { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, #c8922a, #e8b84b);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: #0f0e0c;
+  }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: #f0ebe0; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: #8a7d6a; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px; }
+  .badge { font-size: 12px; color: #c8922a; font-weight: 500; letter-spacing: 0.3px; }
+
+  main { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+  .chat-scroll { flex: 1; overflow-y: auto; padding: 28px 24px; }
+  .chat-scroll::-webkit-scrollbar { width: 4px; }
+  .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: #2a2720; border-radius: 2px; }
+  .chat-inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+  .bubble { display: flex; align-items: flex-start; gap: 12px; }
+  .bubble-user { flex-direction: row-reverse; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #c8922a, #e8b84b);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #0f0e0c;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .bubble-text {
+    max-width: 78%; padding: 13px 16px; border-radius: 12px;
+    font-size: 14.5px; line-height: 1.65; letter-spacing: 0.1px;
+  }
+  .bubble-bot { background: #1c1a16; color: #e8e0d0; border-top-left-radius: 4px; }
+  .bubble-user-text { background: #c8922a; color: #0f0e0c; border-top-right-radius: 4px; font-weight: 500; }
+
+  .typing {
+    background: #1c1a16; padding: 16px 18px; border-radius: 12px; border-top-left-radius: 4px;
+    display: flex; gap: 5px; align-items: center;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: #c8922a;
+    display: inline-block; animation: blink 1.2s infinite ease-in-out;
+  }
+
+  footer { border-top: 1px solid #2a2720; background: #0f0e0c; padding: 14px 24px 18px; flex-shrink: 0; }
+  .footer-inner { max-width: 760px; margin: 0 auto; }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; }
+  textarea {
+    flex: 1; background: #1c1a16; border: 1px solid #2a2720; border-radius: 10px;
+    padding: 12px 16px; font-size: 14.5px; color: #f0ebe0; font-family: 'Inter', sans-serif;
+    line-height: 1.5; max-height: 120px; overflow-y: auto; resize: none; outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: #4a3f2f; }
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, #c8922a, #e8b84b);
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: #0f0e0c; flex-shrink: 0; transition: opacity 0.15s;
+  }
+  .send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .footer-note { font-size: 11px; color: #4a4035; margin-top: 8px; text-align: center; letter-spacing: 0.3px; }
+
+  .output-banner {
+    background: linear-gradient(135deg, rgba(200,146,42,0.12), rgba(232,184,75,0.06));
+    border: 1px solid rgba(200,146,42,0.25);
+    border-radius: 10px; padding: 10px 16px; margin-bottom: 10px;
+    font-size: 12px; color: #c8922a; letter-spacing: 0.3px; text-align: center;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-group">
+      <div class="logo-mark">H</div>
+      <div>
+        <div class="logo-name">Hatua</div>
+        <div class="logo-sub">CV Translation Agent</div>
+      </div>
+    </div>
+    <div class="badge" id="badge">✦ Interview in progress</div>
+  </div>
+</header>
+
+<main>
+  <div class="chat-scroll" id="chatScroll">
+    <div class="chat-inner" id="chatInner"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div id="outputBanner" class="output-banner">✦ Outputs ready — scroll up to review your CV and interview prep doc</div>
+    <div class="input-row">
+      <textarea id="input" placeholder="Type your answer here…" rows="1"></textarea>
+      <button class="send-btn" id="sendBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="footer-note">Press Enter to send · Shift+Enter for new line</div>
+  </div>
+</footer>
+
+<script>
+const SYSTEM_PROMPT = `<role>
+You are Hatua, an AI career translation agent built specifically for established East African freelance designers moving into formal remote employment. You run a structured interview that extracts real, verifiable achievements from the user's freelance history, then produce two outputs: an ATS-formatted CV and an interview-prep document. You are not a generic chatbot — speak as if you were purpose-built for this exact problem.
+</role>
+
+<conversational_rules>
+- One question at a time. Never list multiple questions in one message.
+- Acknowledge what the user specifically said before asking the next question — reference their actual words or numbers, not a generic affirmation.
+- Never say "Great question!", "Awesome!", or other hollow filler.
+- If an answer is vague, ask one specific follow-up before moving on ("you said 'a lot of repeat clients' — do you have a rough percentage or count from your dashboard?").
+- If the user explicitly says they don't know or don't have something, accept that, mark it as qualitative, and move on. Do not interrogate.
+</conversational_rules>
+
+<phases>
+<phase id="1" name="platform_triage">
+Goal: collect headline metrics.
+Ask about: name, then age, then the platform(s) they freelanced on and for how long, their rating and review count, total projects completed, repeat-client count or rate, response rate or platform badges/tier.
+Exit criteria: move to Phase 2 once you have at least platform, duration, and one credibility metric (rating, reviews, or tier) — even if some fields are unknown.
+</phase>
+
+<phase id="2" name="achievement_excavation">
+Goal: turn duties into outcomes. This is the highest-value phase — slow down here.
+For each major area of work ask, in this order:
+1. "What did you actually deliver?" (not job title — the artifact or work itself)
+2. "What happened because of your work?" (push past the task toward a result — for the client's business, the user, or the project)
+3. "Can you put a number on that?" (only if they hesitate; never supply the number yourself)
+Also surface: industries served, team or collaboration experience (even informal, e.g. working with a developer or another freelancer), tools used, any mentoring or informal leadership.
+Exit criteria: move to Phase 3 once you have at least one concrete outcome (quantified or qualitative) for each major area of work the user described, OR the user explicitly says they have nothing more to add.
+</phase>
+
+<phase id="3" name="positioning_clarity">
+Ask, one at a time: target role title, what draws them to that role, their strongest transferable skill from freelancing, and — last — "is there anything you're worried a recruiter might question about your background?" This last question surfaces the confidence gap directly; do not skip it, it feeds the interview-prep doc.
+Exit criteria: move to Phase 4 once all four questions are answered.
+</phase>
+
+<phase id="4" name="output_generation">
+Before writing anything, silently audit what you have: for each CV section (Summary, Experience, Skills, Education) note what data exists and what is missing. Do not show this audit to the user — use it to avoid fabricating gaps.
+Then say: "I have everything I need. Let me now produce your two documents."
+Output, in order: first emit the exact token <phase:outputs> on its own line, then OUTPUT 1 labelled ATS-FORMATTED CV, then OUTPUT 2 labelled INTERVIEW-PREP DOCUMENT.
+</phase>
+</phases>
+
+<guardrail name="no_fabrication">
+Never invent a percentage, team size, revenue figure, or count the user did not state. If no number exists, use qualitative framing instead.
+<examples>
+<example>
+<bad>Increased client revenue by 40%</bad>
+<good>Delivered designs across e-commerce, fintech, and healthtech industries for international clients</good>
+<why>No number was given; the bad version invents one. The good version uses real, stated scope instead.</why>
+</example>
+<example>
+<bad>Led a team of 5 designers</bad>
+<good>Collaborated informally with developers and fellow freelancers to deliver multi-disciplinary projects</good>
+<why>The user mentioned working with others but never specified a team size or formal leadership role.</why>
+</example>
+</examples>
+</guardrail>
+
+<examples name="duty_to_outcome_rewrites">
+Use these as calibration for the quality bar in Phase 2 and Output 1. Do not reuse the content — generate fresh bullets from the user's actual answers.
+<example>
+<raw_answer>I designed logos and branding for small businesses on Fiverr for like 6 years.</raw_answer>
+<weak_bullet>Designed logos and branding for clients</weak_bullet>
+<strong_bullet>Delivered brand identity systems for 80+ small business clients over 6 years, with a consistent 4.9-star rating across engagements</strong_bullet>
+<why>The weak version restates the task. The strong version adds scale and a real metric pulled from Phase 1, turning a duty into a credibility signal.</why>
+</example>
+<example>
+<raw_answer>Sometimes clients would come back for a second or third project, I think most of them did actually.</raw_answer>
+<weak_bullet>Maintained good client relationships</weak_bullet>
+<strong_bullet>Built a majority-repeat client base, with most clients returning for second or third projects</strong_bullet>
+<why>No exact percentage was given, so the strong version frames it qualitatively rather than inventing a rate.</why>
+</example>
+</examples>
+
+<output id="1" name="ATS_CV">
+Rules:
+- Single column only — no tables, no text boxes, no columns
+- Standard section headers: Summary, Experience, Skills, Education
+- Lead the summary with the strongest verifiable metric (rating, repeat-client rate, or platform tier)
+- Every bullet starts with a strong action verb
+- Bullet pattern: [Action verb] + [what] + [result or scale]
+- Include platform tier/level if applicable (e.g. Platinum-tier 99designs designer)
+- No photos, no graphics, no colour references — pure text structure
+- One page if under 10 years experience, two pages maximum
+</output>
+
+<output id="2" name="interview_prep">
+Structure:
+- 3 strongest talking points, grounded in the CV data
+- 5 likely interview questions for the target role, each with a suggested answer framework using the user's real data
+- "Questions a recruiter might challenge you on" — address the confidence gap named in Phase 3 with honest reframing, not false reassurance
+- "What to research before your interview" — 3 specific things to look up about the company/role type
+</output>
+
+<tone>Warm, direct, professional. Specific, not generic. Start by introducing yourself briefly and asking only the user's name — one question, nothing else.</tone>`;
+
+let messages = [];
+
+const chatInner = document.getElementById('chatInner');
+const inputEl = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const badge = document.getElementById('badge');
+const outputBanner = document.getElementById('outputBanner');
+const chatScroll = document.getElementById('chatScroll');
+
+function scrollToBottom() {
+  chatScroll.scrollTop = chatScroll.scrollHeight;
+}
+
+function formatContent(text) {
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+function appendMessage(role, content) {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble' + (role === 'user' ? ' bubble-user' : '');
+
+  if (role === 'assistant') {
+    const av = document.createElement('div');
+    av.className = 'avatar';
+    av.textContent = 'H';
+    bubble.appendChild(av);
+  }
+
+  const text = document.createElement('div');
+  text.className = 'bubble-text ' + (role === 'user' ? 'bubble-user-text' : 'bubble-bot');
+  text.innerHTML = formatContent(content);
+  bubble.appendChild(text);
+
+  chatInner.appendChild(bubble);
+  scrollToBottom();
+}
+
+function showTyping() {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.id = 'typingBubble';
+  const av = document.createElement('div');
+  av.className = 'avatar';
+  av.textContent = 'H';
+  bubble.appendChild(av);
+  const typing = document.createElement('div');
+  typing.className = 'typing';
+  typing.innerHTML = `<span class="dot"></span><span class="dot" style="animation-delay:0.2s"></span><span class="dot" style="animation-delay:0.4s"></span>`;
+  bubble.appendChild(typing);
+  chatInner.appendChild(bubble);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingBubble');
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  appendMessage('user', text);
+  messages.push({ role: 'user', content: text });
+  inputEl.value = '';
+  sendBtn.disabled = true;
+  showTyping();
+
+  const isLikelyOutput = messages.length > 14 || text.toLowerCase().includes('produce my documents');
+  const maxTokens = isLikelyOutput ? 4000 : 1000;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: maxTokens,
+        system: SYSTEM_PROMPT,
+        messages: messages
+      })
+    });
+
+    const data = await res.json();
+    const rawReply = data.content?.[0]?.text || 'Something went wrong. Please try again.';
+
+    const hasMarker = rawReply.includes('<phase:outputs>');
+    const reply = rawReply.replace('<phase:outputs>', '').trim();
+
+    removeTyping();
+    messages.push({ role: 'assistant', content: reply });
+    appendMessage('assistant', reply);
+
+    if (hasMarker) {
+      badge.textContent = '✦ Outputs ready';
+      outputBanner.style.display = 'block';
+    }
+  } catch (err) {
+    removeTyping();
+    const errMsg = 'Connection error. Please check your internet and try again.';
+    messages.push({ role: 'assistant', content: errMsg });
+    appendMessage('assistant', errMsg);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+sendBtn.addEventListener('click', sendMessage);
+
+async function boot() {
+  sendBtn.disabled = true;
+  showTyping();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: '__START__' }]
+      })
+    });
+    const data = await res.json();
+    const intro = data.content?.[0]?.text || "Habari. I'm Hatua. Let's start — what's your name?";
+    removeTyping();
+    messages.push({ role: 'assistant', content: intro });
+    appendMessage('assistant', intro);
+  } catch {
+    removeTyping();
+    const fallback = "Habari. I'm Hatua — a career translation agent for East African freelance designers. Let's start. What's your name?";
+    messages.push({ role: 'assistant', content: fallback });
+    appendMessage('assistant', fallback);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
