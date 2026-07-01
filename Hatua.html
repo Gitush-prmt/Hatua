@@ -15,12 +15,12 @@
     0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
     40% { opacity: 1; transform: scale(1); }
   }
-
-  header {
-    border-bottom: 1px solid #2a2720;
-    background: #0f0e0c;
-    flex-shrink: 0;
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
+
+  header { border-bottom: 1px solid #2a2720; background: #0f0e0c; flex-shrink: 0; }
   .header-inner {
     max-width: 760px; margin: 0 auto; padding: 14px 24px;
     display: flex; align-items: center; justify-content: space-between;
@@ -68,8 +68,58 @@
     display: inline-block; animation: blink 1.2s infinite ease-in-out;
   }
 
+  /* ── Footer ── */
   footer { border-top: 1px solid #2a2720; background: #0f0e0c; padding: 14px 24px 18px; flex-shrink: 0; }
   .footer-inner { max-width: 760px; margin: 0 auto; }
+
+  /* Output ready banner */
+  .output-banner {
+    background: linear-gradient(135deg, rgba(200,146,42,0.12), rgba(232,184,75,0.06));
+    border: 1px solid rgba(200,146,42,0.25);
+    border-radius: 10px; padding: 10px 16px; margin-bottom: 12px;
+    font-size: 12px; color: #c8922a; letter-spacing: 0.3px; text-align: center;
+    display: none;
+    animation: fadeSlideIn 0.4s ease;
+  }
+
+  /* Download tray — hidden until outputs fire */
+  .download-tray {
+    display: none;
+    gap: 10px;
+    margin-bottom: 12px;
+    animation: fadeSlideIn 0.45s ease;
+  }
+  .download-tray.visible { display: flex; }
+
+  .dl-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.2px; transition: opacity 0.15s, transform 0.1s;
+  }
+  .dl-btn:active { transform: scale(0.97); }
+
+  .dl-btn-cv {
+    background: linear-gradient(135deg, #c8922a, #e8b84b);
+    color: #0f0e0c;
+  }
+  .dl-btn-prep {
+    background: #1c1a16;
+    color: #e8b84b;
+    border: 1px solid #3a3020;
+  }
+  .dl-btn:disabled {
+    opacity: 0.3; cursor: not-allowed; transform: none;
+  }
+  .dl-btn svg { flex-shrink: 0; }
+
+  /* Divider between download tray and input */
+  .tray-divider {
+    border: none; border-top: 1px solid #1e1c18; margin-bottom: 12px;
+    display: none;
+  }
+  .tray-divider.visible { display: block; }
+
   .input-row { display: flex; gap: 10px; align-items: flex-end; }
   textarea {
     flex: 1; background: #1c1a16; border: 1px solid #2a2720; border-radius: 10px;
@@ -86,14 +136,6 @@
   }
   .send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .footer-note { font-size: 11px; color: #4a4035; margin-top: 8px; text-align: center; letter-spacing: 0.3px; }
-
-  .output-banner {
-    background: linear-gradient(135deg, rgba(200,146,42,0.12), rgba(232,184,75,0.06));
-    border: 1px solid rgba(200,146,42,0.25);
-    border-radius: 10px; padding: 10px 16px; margin-bottom: 10px;
-    font-size: 12px; color: #c8922a; letter-spacing: 0.3px; text-align: center;
-    display: none;
-  }
 </style>
 </head>
 <body>
@@ -119,7 +161,34 @@
 
 <footer>
   <div class="footer-inner">
-    <div id="outputBanner" class="output-banner">✦ Outputs ready — scroll up to review your CV and interview prep doc</div>
+
+    <!-- Output ready banner -->
+    <div id="outputBanner" class="output-banner">
+      ✦ Your documents are ready — download them below
+    </div>
+
+    <!-- Download tray (locked until outputs fire) -->
+    <div id="downloadTray" class="download-tray">
+      <button class="dl-btn dl-btn-cv" id="dlCV" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download CV
+      </button>
+      <button class="dl-btn dl-btn-prep" id="dlPrep" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download Interview Prep
+      </button>
+    </div>
+
+    <hr id="trayDivider" class="tray-divider">
+
     <div class="input-row">
       <textarea id="input" placeholder="Type your answer here…" rows="1"></textarea>
       <button class="send-btn" id="sendBtn">
@@ -130,6 +199,7 @@
       </button>
     </div>
     <div class="footer-note">Press Enter to send · Shift+Enter for new line</div>
+
   </div>
 </footer>
 
@@ -171,7 +241,10 @@ Exit criteria: move to Phase 4 once all four questions are answered.
 <phase id="4" name="output_generation">
 Before writing anything, silently audit what you have: for each CV section (Summary, Experience, Skills, Education) note what data exists and what is missing. Do not show this audit to the user — use it to avoid fabricating gaps.
 Then say: "I have everything I need. Let me now produce your two documents."
-Output, in order: first emit the exact token <phase:outputs> on its own line, then OUTPUT 1 labelled ATS-FORMATTED CV, then OUTPUT 2 labelled INTERVIEW-PREP DOCUMENT.
+Output, in order:
+1. Emit the exact token <phase:outputs> on its own line
+2. Emit the exact separator --- ATS-FORMATTED CV --- on its own line, then write the full CV
+3. Emit the exact separator --- INTERVIEW-PREP DOCUMENT --- on its own line, then write the full interview prep document
 </phase>
 </phases>
 
@@ -230,14 +303,21 @@ Structure:
 <tone>Warm, direct, professional. Specific, not generic. Start by introducing yourself briefly and asking only the user's name — one question, nothing else.</tone>`;
 
 let messages = [];
+let cvText = '';
+let prepText = '';
 
-const chatInner = document.getElementById('chatInner');
-const inputEl = document.getElementById('input');
-const sendBtn = document.getElementById('sendBtn');
-const badge = document.getElementById('badge');
+const chatInner    = document.getElementById('chatInner');
+const inputEl      = document.getElementById('input');
+const sendBtn      = document.getElementById('sendBtn');
+const badge        = document.getElementById('badge');
 const outputBanner = document.getElementById('outputBanner');
-const chatScroll = document.getElementById('chatScroll');
+const downloadTray = document.getElementById('downloadTray');
+const trayDivider  = document.getElementById('trayDivider');
+const dlCV         = document.getElementById('dlCV');
+const dlPrep       = document.getElementById('dlPrep');
+const chatScroll   = document.getElementById('chatScroll');
 
+/* ── Helpers ── */
 function scrollToBottom() {
   chatScroll.scrollTop = chatScroll.scrollHeight;
 }
@@ -248,6 +328,54 @@ function formatContent(text) {
   return text;
 }
 
+function downloadFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* Parse the output reply into two named documents */
+function parseOutputs(text) {
+  // Strip the phase marker if still present
+  text = text.replace('<phase:outputs>', '').trim();
+
+  const cvSep   = '--- ATS-FORMATTED CV ---';
+  const prepSep = '--- INTERVIEW-PREP DOCUMENT ---';
+
+  const cvIdx   = text.indexOf(cvSep);
+  const prepIdx = text.indexOf(prepSep);
+
+  if (cvIdx !== -1 && prepIdx !== -1) {
+    cvText   = text.slice(cvIdx + cvSep.length, prepIdx).trim();
+    prepText = text.slice(prepIdx + prepSep.length).trim();
+  } else if (cvIdx !== -1) {
+    // Only CV found — store everything after separator as CV
+    cvText   = text.slice(cvIdx + cvSep.length).trim();
+    prepText = '';
+  } else {
+    // Fallback: store whole reply as CV
+    cvText   = text.trim();
+    prepText = '';
+  }
+}
+
+/* Unlock download tray */
+function activateDownloads() {
+  badge.textContent = '✦ Outputs ready';
+  outputBanner.style.display = 'block';
+  downloadTray.classList.add('visible');
+  trayDivider.classList.add('visible');
+  dlCV.disabled   = false;
+  dlPrep.disabled = prepText.length > 0 ? false : true;
+}
+
+/* ── DOM ── */
 function appendMessage(role, content) {
   const bubble = document.createElement('div');
   bubble.className = 'bubble' + (role === 'user' ? ' bubble-user' : '');
@@ -259,10 +387,10 @@ function appendMessage(role, content) {
     bubble.appendChild(av);
   }
 
-  const text = document.createElement('div');
-  text.className = 'bubble-text ' + (role === 'user' ? 'bubble-user-text' : 'bubble-bot');
-  text.innerHTML = formatContent(content);
-  bubble.appendChild(text);
+  const textEl = document.createElement('div');
+  textEl.className = 'bubble-text ' + (role === 'user' ? 'bubble-user-text' : 'bubble-bot');
+  textEl.innerHTML = formatContent(content);
+  bubble.appendChild(textEl);
 
   chatInner.appendChild(bubble);
   scrollToBottom();
@@ -278,7 +406,7 @@ function showTyping() {
   bubble.appendChild(av);
   const typing = document.createElement('div');
   typing.className = 'typing';
-  typing.innerHTML = `<span class="dot"></span><span class="dot" style="animation-delay:0.2s"></span><span class="dot" style="animation-delay:0.4s"></span>`;
+  typing.innerHTML = '<span class="dot"></span><span class="dot" style="animation-delay:0.2s"></span><span class="dot" style="animation-delay:0.4s"></span>';
   bubble.appendChild(typing);
   chatInner.appendChild(bubble);
   scrollToBottom();
@@ -289,6 +417,7 @@ function removeTyping() {
   if (t) t.remove();
 }
 
+/* ── API ── */
 async function sendMessage() {
   const text = inputEl.value.trim();
   if (!text) return;
@@ -325,8 +454,8 @@ async function sendMessage() {
     appendMessage('assistant', reply);
 
     if (hasMarker) {
-      badge.textContent = '✦ Outputs ready';
-      outputBanner.style.display = 'block';
+      parseOutputs(rawReply);
+      activateDownloads();
     }
   } catch (err) {
     removeTyping();
@@ -339,15 +468,20 @@ async function sendMessage() {
   }
 }
 
+/* ── Events ── */
 inputEl.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 });
-
 sendBtn.addEventListener('click', sendMessage);
 
+dlCV.addEventListener('click', () => {
+  if (cvText) downloadFile('Hatua_CV.txt', cvText);
+});
+dlPrep.addEventListener('click', () => {
+  if (prepText) downloadFile('Hatua_Interview_Prep.txt', prepText);
+});
+
+/* ── Boot ── */
 async function boot() {
   sendBtn.disabled = true;
   showTyping();
