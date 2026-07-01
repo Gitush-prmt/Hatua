@@ -1,11 +1,9 @@
 # Hatua
 
----
-
 ## Introduction
 
 **Project name: Hatua**
-An AI agent that helps East African digital freelancers turn real platform proof-of-work and metrics into CVs potential employers trust. Made for freelancers who are looking to transition from freelance informal employment to formal roles - remote or in-person.
+Hatua is an AI agent that helps East African digital freelancers turn real platform proof-of-work and metrics into CVs potential employers trust. Made for freelancers who are looking to transition from freelance informal employment to formal roles - remote or in-person.
 
 **Role:** Solo AI Product Manager / Designer / Builder
 **Timeline:** June – August 2026 (10 weeks)
