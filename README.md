@@ -139,33 +139,42 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 - Does not draw up cover letters/LinkedIn (for v1.5),
 - Does not have practice-interview simulation capabilities (for v2)
 
-### Key design/guardrail decisions
+### Key design and prompt engineering decisions
 
 - Extraction prompt handled thin/messy data well without fabricating metrics. The tone was displayed as instructed in the prompt.
 - Original prompt build in the Hatua.jsx file had to he engineered and elevated by moving away from raw text blocks and adopting **Structured XML-tag architectures**
-    - **Token Space**:  `max_tokens` set at `1000` for initial conversations, but scaled up to `4000` right before triggering Phase 4 so the generated CV text doesn't hit a sudden hard cutoff limit.
-- Added download capabilities and button to the Hatua file. The system prompt now instructs the model to emit two explicit separators (`--- ATS-FORMATTED CV ---` and `--- INTERVIEW-PREP DOCUMENT ---`) inside the output message. The `parseOutputs()` function slices on those markers, so each document is cleanly isolated before being handed to the downloader.
+- **Token Space**:  `max_tokens` set at `1000` for initial conversations, but scaled up to `4000` right before triggering Phase 4 so the generated CV text doesn't hit a sudden hard cutoff limit.
+- Added download capabilities and button. The system prompt now instructs the model to emit two explicit separators (`--- ATS-FORMATTED CV ---` and `--- INTERVIEW-PREP DOCUMENT ---`) inside the output message. The `parseOutputs()` function slices on those markers, so each document is cleanly isolated before being handed to the downloader.
 
 ---
 
 ## 5. Evidence & Results
 
-> 💡 **Capture as you go:** This is your “kill criteria checkpoint” log — even failed attempts are good evidence of rigor.
-> 
+### Results checkpoint
 
-### Week 4 checkpoint
+| Date | Task | Status | Remedy |
+| --- | --- | --- | --- |
+| 29/06/26 | Conversational intake: Working end-to-end flow | ✅ | - |
+|  | Extraction: Turn data into consumable information | ❌ | Engineer prompt to translate freelance language into formal role language throughout |
+|  | Output 1: ATS-formatted CV | ❌ | Engineer more effective prompts |
+|  | Output 2: Static interview-prep document | ❌ | Increase output token limits |
+| 2/07/26 | Conversational intake: Working end-to-end flow | ❌ | Limit questions to important queries and ask two questions at a time instead of one at a time to guard against token limit being exceeded. |
+|  | Extraction: Turn data into consumable information | ✅ | - |
+|  | Output 1: ATS-formatted CV | ❌ | Engineer more effective prompts |
+|  | Output 2: Static interview-prep document | ✅ | - |
+| 5/07/26 | Conversational intake: Working end-to-end flow | ✅ | - |
+|  | Extraction: Turn data into consumable information | ✅ | - |
+|  | Output 1: ATS-formatted CV | ✅ | - |
+|  | Output 2: Static interview-prep document | ✅ | - |
 
-- Date:
-- Working end-to-end flow for own case? Y/N
-- If no — what scope was cut, per the kill criteria:
-
-### Before/after CVs
+### Before/after Hatua extracted CVs
 
 | Case | ATS score before | ATS score after | Tool used to measure |
 | --- | --- | --- | --- |
 | Gits |  |  |  |
 | Mwai |  |  |  |
 | Mutile |  |  |  |
+| Hareem |  |  |  |
 
 ### Qualitative feedback
 
@@ -173,10 +182,12 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 - Mutile’s reaction to the output:
 - What you changed in response:
 
+### Before and After Prompts
+
 ### Honest limitations
 
-- Sample size is 3, one of whom is you — directional evidence, not proof at scale
-- *(Add any other limitations you encountered)*
+- The sample size (4) is good enough to provide directional evidence, but too small to be proof at scale
+- The cost of token usage on my Claude tier made it expensive to run the web app the whole day or a continuous period of usage.
 
 ---
 
