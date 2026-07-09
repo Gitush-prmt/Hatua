@@ -132,19 +132,26 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 
 ### Hatua non-goals (explicit)
 
-- Not for writers/devs and emerging freelancers (for v1.5). Also not for the broader informal economy
-- Not a job-matching ap and does not include application tracking
-- Not multi-language
-- Not to have job-platform integrations
+- **Not for writers/devs and emerging freelancers (for v1.5):** Also not for the broader informal economy
+- **Not a job-matching app: D**oes not also include application tracking and job-platform integrations
+- **No dedicated mobile apps:** This will be fully web-native and responsive.Not building an Android or iOS application.
+- **Not multi-language**
+- **No native user auth system:** You are **not** building a custom signup, login, or password recovery system
+- **No custom database backend:** Everything runs in-session (volatile local state). If the user refreshes, they start over.
 - Does not draw up cover letters/LinkedIn (for v1.5),
-- Does not have practice-interview simulation capabilities (for v2)
+- Does not converse on other CV sections - Education. Focus is on experience and real achievements framing
 
 ### Key design and prompt engineering decisions
 
-- Extraction prompt handled thin/messy data well without fabricating metrics. The tone was displayed as instructed in the prompt.
-- Original prompt build in the Hatua.jsx file had to he engineered and elevated by moving away from raw text blocks and adopting **Structured XML-tag architectures**
-- **Token Space**:  `max_tokens` set at `1000` for initial conversations, but scaled up to `4000` right before triggering Phase 4 so the generated CV text doesn't hit a sudden hard cutoff limit.
-- Added download capabilities and button. The system prompt now instructs the model to emit two explicit separators (`--- ATS-FORMATTED CV ---` and `--- INTERVIEW-PREP DOCUMENT ---`) inside the output message. The `parseOutputs()` function slices on those markers, so each document is cleanly isolated before being handed to the downloader.
+- Extraction prompt handled thin/messy data well without fabricating metrics. The tone was displayed as instructed in the prompt. ✅
+- Original prompt build in the Hatua.jsx file had to he engineered and elevated by moving away from raw text blocks and adopting **Structured XML-tag architectures. ✅**
+- **Token Space**:  `max_tokens` set at `1000` for initial conversations, but scaled up to `4000` right before triggering Phase 4 so the generated CV text doesn't hit a sudden hard cut-off limit.
+- Added download capabilities and button. The system prompt now instructs the model to emit two explicit separators (`--- ATS-FORMATTED CV ---` and `--- INTERVIEW-PREP DOCUMENT ---`) as outputs. The `parseOutputs()` function slices on those markers, so each document is cleanly isolated before being handed to the downloader.
+- **Token Exhaustion before achieving results.**  Three separate issues were causing this:
+    - The output-trigger was unreliable:  If a user answers tersely and reaches Phase 4 before message 14, that turn only gets 1,000 tokens — not enough for a full CV + interview-prep doc, so response cuts off mid-document. **Fix:** have the model signal phase transitions explicitly (e.g. emit `<phase:2>`, `<phase:3>`,  tags at the start of each reply), and set `maxTokens` based on the *actual* phase tag from the previous response, not message count or string-matching.
+    - One call was being used to produce two full documents at once: 4,000 tokens had to cover the model's chat, the entire CV, *and* the interview-prep doc. **Fix:** split Phase 4 into two sequential API calls — one that returns only the CV, another that returns only the interview-prep doc. Gave each its own 3,000–4,000 token budget. This also means a truncation only costs one document, not both.
+    - The full system prompt + full transcript was resent on every single turn: The system prompt is long and `messages` grows every turn. **Fix:** instead of appending every raw turn to `messages`, maintain a compact JSON "extracted answers" object client-side (name, platform, metrics, achievements, target role, confidence gap) and send *that* plus just the latest exchange, rather than the full transcript. Update it after each assistant reply.
+- **Phase 2 has no hard cap:** "For each major area of work" with 3 sub-questions per area is open-ended — a user with 4 service lines could hit 12+ questions before Phase 3 even starts. **Fix**: cap it explicitly, e.g. "cover no more than the 2–3 highest-impact work areas; if the user names more, ask which 2–3 matter most for their target role." This keeps the interview in line.
 
 ---
 
@@ -162,7 +169,11 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 |  | Extraction: Turn data into consumable information | ✅ | - |
 |  | Output 1: ATS-formatted CV | ❌ | Engineer more effective prompts |
 |  | Output 2: Static interview-prep document | ✅ | - |
-| 5/07/26 | Conversational intake: Working end-to-end flow | ✅ | - |
+| 5/07/26 | Conversational intake: Working end-to-end flow | ❌ | Added capped phase-detection with an explicit phase tag so that conversation doesn’t cut off before outputs |
+|  | Extraction: Turn data into consumable information | ✅ | - |
+|  | Output 1: ATS-formatted CV | ✅ | - |
+|  | Output 2: Static interview-prep document | ✅ | - |
+| 8/07/26 | Conversational intake: Working end-to-end flow | ❌ | Tightened the prompt's tagging instructions to remove a wait step and unnecessary user action at the final phase |
 |  | Extraction: Turn data into consumable information | ✅ | - |
 |  | Output 1: ATS-formatted CV | ✅ | - |
 |  | Output 2: Static interview-prep document | ✅ | - |
@@ -171,15 +182,17 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 
 | Case | ATS score before | ATS score after | Tool used to measure |
 | --- | --- | --- | --- |
-| Gits |  |  |  |
-| Mwai |  |  |  |
-| Mutile |  |  |  |
-| Hareem |  |  |  |
+| Gits | 78 | 83 | https://enhancv.com/resources/resume-checker/ |
+| Mutile | 64 | 79 | https://enhancv.com/resources/resume-checker/ |
+| Hareem | 69 | 81 | https://enhancv.com/resources/resume-checker/ |
+| Yusuf | 56 | 80 | https://enhancv.com/resources/resume-checker/ |
 
 ### Qualitative feedback
 
 - Mwai’s reaction to the output:
 - Mutile’s reaction to the output:
+- Hareem’s reaction to the output:
+- Yusuf’s reaction to the output:
 - What you changed in response:
 
 ### Before and After Prompts
@@ -204,4 +217,4 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 - Link to full system prompts / extraction logic
 - GitHub repo - https://github.com/Gitush-prmt/Hatua
 - Link to raw interview notes (Mwai, Mutile) — anonymized if shared publicly
-- Idea Probe Protocol transcript or summary (optional — shows your thinking process in full, which is rare and valuable)
+- Idea Probe Protocol transcript or summary (optional — shows your thinking process in full, which is rare and valuable)t or summary (optional — shows your thinking process in full, which is rare and valuable)
