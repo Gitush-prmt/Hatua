@@ -1,9 +1,11 @@
-# Hatua
+# AI Product Manager Portfolio Case Study
+
+---
 
 ## Introduction
 
 **Project name: Hatua**
-Hatua is an AI agent that helps East African digital freelancers turn real platform proof-of-work and metrics into CVs potential employers trust. Made for freelancers who are looking to transition from freelance informal employment to formal roles - remote or in-person.
+An AI agent that helps East African digital freelancers turn real platform proof-of-work and metrics into CVs potential employers trust. Made for freelancers who are looking to transition from freelance informal employment to formal roles - remote or in-person.
 
 **Role:** Solo AI Product Manager / Designer / Builder
 **Timeline:** June – August 2026 (10 weeks)
@@ -90,8 +92,9 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 
 ### **The real gap**
 
-- No tool translates *real* freelance-platform metrics and proof of work (ratings, repeat-client %, response time) into employer-trusted language without fabricating data.
-- No non-generic tools are built for the African freelance-to-formal transition specifically. Most are built for generic CV generation.
+- No tool translates *real* freelance-platform metrics and proof of work (ratings, repeat-client %, response time) into employer-trusted language. Most of the available tools expect the user to come up with the metrics and proof of work and fit them into a CV for them to review and develop better versions with the data already supplied.
+- No tool translates *real* freelance-platform metrics and proof of work (ratings, repeat-client %, response time) without fabricating data.
+- No non-generic tools are built for the East African (and African) freelance-to-formal transition specifically. Most are built for generic CV generation and review.
 
 ---
 
@@ -134,24 +137,27 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 
 - **Not for writers/devs and emerging freelancers (for v1.5):** Also not for the broader informal economy
 - **Not a job-matching app: D**oes not also include application tracking and job-platform integrations
-- **No dedicated mobile apps:** This will be fully web-native and responsive.Not building an Android or iOS application.
+- **No dedicated mobile apps:** This will be fully web-native and responsive. Not building an Android or iOS application.
 - **Not multi-language**
 - **No native user auth system:** You are **not** building a custom signup, login, or password recovery system
 - **No custom database backend:** Everything runs in-session (volatile local state). If the user refreshes, they start over.
 - Does not draw up cover letters/LinkedIn (for v1.5),
-- Does not converse on other CV sections - Education. Focus is on experience and real achievements framing
+- Does not converse with the user on other CV sections - Education. Focus is on experience and real achievements framing
 
 ### Key design and prompt engineering decisions
 
 - Extraction prompt handled thin/messy data well without fabricating metrics. The tone was displayed as instructed in the prompt. ✅
-- Original prompt build in the Hatua.jsx file had to he engineered and elevated by moving away from raw text blocks and adopting **Structured XML-tag architectures. ✅**
+- Original prompt build in the Hatua.jsx file had to be engineered and elevated by moving away from raw text blocks and adopting structured XML-tag architectures. This better prompt structure eliminates ambiguity by explicitly separating instructions and context **✅**
 - **Token Space**:  `max_tokens` set at `1000` for initial conversations, but scaled up to `4000` right before triggering Phase 4 so the generated CV text doesn't hit a sudden hard cut-off limit.
 - Added download capabilities and button. The system prompt now instructs the model to emit two explicit separators (`--- ATS-FORMATTED CV ---` and `--- INTERVIEW-PREP DOCUMENT ---`) as outputs. The `parseOutputs()` function slices on those markers, so each document is cleanly isolated before being handed to the downloader.
 - **Token Exhaustion before achieving results.**  Three separate issues were causing this:
-    - The output-trigger was unreliable:  If a user answers tersely and reaches Phase 4 before message 14, that turn only gets 1,000 tokens — not enough for a full CV + interview-prep doc, so response cuts off mid-document. **Fix:** have the model signal phase transitions explicitly (e.g. emit `<phase:2>`, `<phase:3>`,  tags at the start of each reply), and set `maxTokens` based on the *actual* phase tag from the previous response, not message count or string-matching.
-    - One call was being used to produce two full documents at once: 4,000 tokens had to cover the model's chat, the entire CV, *and* the interview-prep doc. **Fix:** split Phase 4 into two sequential API calls — one that returns only the CV, another that returns only the interview-prep doc. Gave each its own 3,000–4,000 token budget. This also means a truncation only costs one document, not both.
-    - The full system prompt + full transcript was resent on every single turn: The system prompt is long and `messages` grows every turn. **Fix:** instead of appending every raw turn to `messages`, maintain a compact JSON "extracted answers" object client-side (name, platform, metrics, achievements, target role, confidence gap) and send *that* plus just the latest exchange, rather than the full transcript. Update it after each assistant reply.
-- **Phase 2 has no hard cap:** "For each major area of work" with 3 sub-questions per area is open-ended — a user with 4 service lines could hit 12+ questions before Phase 3 even starts. **Fix**: cap it explicitly, e.g. "cover no more than the 2–3 highest-impact work areas; if the user names more, ask which 2–3 matter most for their target role." This keeps the interview in line.
+    - The output-trigger was unreliable:  If a user answers tersely and reaches Phase 4 before message 14, that turn only gets 1,000 tokens — not enough for a full CV + interview-prep doc, so response cuts off mid-document. ***Fix:*** have the model signal phase transitions explicitly (e.g. emit `<phase:2>`, `<phase:3>`,  tags at the start of each reply), and set `maxTokens` based on the *actual* phase tag from the previous response, not message count or string-matching.
+    - One call was being used to produce two full documents at once: 4,000 tokens had to cover the model's chat, the entire CV, *and* the interview-prep doc. ***Fix:*** split Phase 4 into two sequential API calls — one that returns only the CV, another that returns only the interview-prep doc. Gave each its own 3,000–4,000 token budget. This also means a truncation only costs one document, not both.
+    - The full system prompt + full transcript was resent on every single turn: The system prompt is long and `messages` grows every turn. ***Fix:*** instead of appending every raw turn to `messages`, maintain a compact JSON "extracted answers" object client-side (name, platform, metrics, achievements, target role, confidence gap) and send *that* plus just the latest exchange, rather than the full transcript. Update it after each assistant reply.
+- **Phase 2 (Achievement excavation) has no hard cap:**  3 sub-questions per area or work achievement is open-ended — a user with 4 service lines could hit 12+ questions before Phase 3 even starts. ***Fix:*** cap it explicitly, e.g. "cover no more than the 2–3 highest-impact work areas; if the user names more, ask which 2–3 matter most for their target role." This keeps the interview in line and on topic.
+- Added two new `<guardrail>` blocks to the system prompt (inside the `SYSTEM_PROMPT` template literal), inserted right after the existing `no_fabrication` guardrail, before the `duty_to_outcome_rewrites` examples:
+    - **`no_fabrication_cv_output`** — fires right before the CV is written in response to `GENERATE_CV_ONLY`. Makes the model re-check every bullet against the transcript *at generation time*, not just back in Phase 4.
+    - **`no_fabrication_interview_prep_output`** — fires right before the interview-prep doc is written in response to `GENERATE_PREP_ONLY`. This one didn't exist at all before. It covers the different risk profile for that document (invented story outcomes, conflicts, or opinions rather than invented numbers), tells the model how to handle gaps (flag rather than invent), and ends with the same trace-back-to-transcript check.
 
 ---
 
@@ -177,30 +183,49 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 |  | Extraction: Turn data into consumable information | ✅ | - |
 |  | Output 1: ATS-formatted CV | ✅ | - |
 |  | Output 2: Static interview-prep document | ✅ | - |
+| 10/07/26 | Conversational intake: Working end-to-end flow | ✅ | - |
+|  | Extraction: Turn data into consumable information | ✅ | - |
+|  | Output 1: ATS-formatted CV | ✅ | - |
+|  | Output 2: Static interview-prep document | ✅ | - |
+| 13/07/2026 | Conversational intake: Working end-to-end flow | ✅ | - |
+|  | Extraction: Turn data into consumable information | ✅ | - |
+|  | Output 1: ATS-formatted CV | ✅ | - |
+|  | Output 2: Static interview-prep document | ✅ | - |
 
 ### Before/after Hatua extracted CVs
 
 | Case | ATS score before | ATS score after | Tool used to measure |
 | --- | --- | --- | --- |
-| Gits | 78 | 83 | https://enhancv.com/resources/resume-checker/ |
-| Mutile | 64 | 79 | https://enhancv.com/resources/resume-checker/ |
-| Hareem | 69 | 81 | https://enhancv.com/resources/resume-checker/ |
-| Yusuf | 56 | 80 | https://enhancv.com/resources/resume-checker/ |
+| Mwai | 78 | 87 | https://enhancv.com/resources/resume-checker/ |
+| Anne | 64 | 89 | https://enhancv.com/resources/resume-checker/ |
+| Hareem | 69 | 87 | https://enhancv.com/resources/resume-checker/ |
+| Yusuf | 56 | 84 | https://enhancv.com/resources/resume-checker/ |
+| Shari | 68 | 85 | https://enhancv.com/resources/resume-checker/ |
+| Sunny | 72 | 89 | https://enhancv.com/resources/resume-checker/ |
 
 ### Qualitative feedback
 
-- Mwai’s reaction to the output:
-- Mutile’s reaction to the output:
-- Hareem’s reaction to the output:
-- Yusuf’s reaction to the output:
-- What you changed in response:
+- Mwai’s reaction to the output: “There was a small but noticeable incidence of fabrication on the Interview Prep document”
+    - *What I changed in response:*  Added two new `<guardrail>` blocks to the system prompt (inside the `SYSTEM_PROMPT` template literal), inserted right after the existing `no_fabrication` guardrail, before the `duty_to_outcome_rewrites` examples. 
+    Hatua already had a *pre*-generation check for the CV
+- Anne’s reaction to the output: “Too many question asked by Hatua. It seemed like the questions were never-ending”
+    - *What I changed in response:* Added a soft ceiling of ~10 questions in every phase, with instructions to move on and use qualitative framing for anything still missing.
+- Sunny’s reaction to the output: “The ‘What to Research Before Your Interview’ was an unexpected and pleasant addition to the Interview Prep document. This really helped in my preparation for my interview”
+    - *What I changed in response:* Maintained the file as is. No change required. Additional features were maintained.
+- Shari’s reaction to the output: “The summary section of the CV is doing its job, but the Skills section has mixed the tools with some role keywords. This, I suspect, is blocking ATS keyword parsing”
+    - *What I changed in response:* Split the Skills section into two explicit subsections — role competencies first, tools second (the software list). Core Competencies comes first — this is the ATS keyword block, mapped directly to the user's target role, listing capabilities not tools. Tools & Platforms comes second — the actual software list. ATS parsers weight the competencies block heavily because it matches the keyword clusters recruiters build into their filters. Separating them means neither dilutes the other.
 
-### Before and After Prompts
+### Security Considerations
+
+To keep Hatua as simple, safe and fast as possible, I used **Vercel Serverless Functions**. Vercel allows a user to drop a single backend file into a project folder alongside the`index.html`, and it handles the server setup.
+
+I created a secure serverless backend that sits between the HTML page and Anthropic's servers. When the frontend needs to connect to the AI, it will fetch from `/api/chat` instead of calling Anthropic directly. This keeps the `ANTHROPIC_API_KEY` hidden on Vercel's secure servers, prevents users from stealing your key to run up bills, and cleanly proxies all conversational requests. `callClaude()` now fetches `/api/chat` — key removed from browser entirely.
 
 ### Honest limitations
 
-- The sample size (4) is good enough to provide directional evidence, but too small to be proof at scale
+- The sample size (6) is good enough to provide directional and product need Suevidence, but too small to be proof at scale
 - The cost of token usage on my Claude tier made it expensive to run the web app the whole day or a continuous period of usage.
+- Everything runs in-session (volatile local state). If the user refreshes, they start over. This was intentional so as to security overhead entirely.
 
 ---
 
@@ -217,4 +242,4 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 - Link to full system prompts / extraction logic
 - GitHub repo - https://github.com/Gitush-prmt/Hatua
 - Link to raw interview notes (Mwai, Mutile) — anonymized if shared publicly
-- Idea Probe Protocol transcript or summary (optional — shows your thinking process in full, which is rare and valuable)t or summary (optional — shows your thinking process in full, which is rare and valuable)
+- Idea Probe Protocol transcript or summary (optional — shows your thinking process in full, which is rare and valuable)
