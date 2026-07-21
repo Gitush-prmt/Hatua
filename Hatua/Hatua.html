@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      background: #0f0e0c;
+      color: #f0ebe0;
+      font-family: 'Inter', sans-serif;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @keyframes blink {
+
+      0%,
+      80%,
+      100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+      }
+
+      40% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    header {
+      border-bottom: 1px solid #2a2720;
+      background: #0f0e0c;
+      flex-shrink: 0;
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #c8922a, #e8b84b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #0f0e0c;
+    }
+
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: #f0ebe0;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: #8a7d6a;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .badge {
+      font-size: 12px;
+      color: #c8922a;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    main {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 24px;
+    }
+
+    .chat-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background: #2a2720;
+      border-radius: 2px;
+    }
+
+    .chat-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .bubble {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .bubble-user {
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #c8922a, #e8b84b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      color: #0f0e0c;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .bubble-text {
+      max-width: 78%;
+      padding: 13px 16px;
+      border-radius: 12px;
+      font-size: 14.5px;
+      line-height: 1.65;
+      letter-spacing: 0.1px;
+    }
+
+    .bubble-bot {
+      background: #1c1a16;
+      color: #e8e0d0;
+      border-top-left-radius: 4px;
+    }
+
+    .bubble-user-text {
+      background: #c8922a;
+      color: #0f0e0c;
+      border-top-right-radius: 4px;
+      font-weight: 500;
+    }
+
+    .typing {
+      background: #1c1a16;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border-top-left-radius: 4px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #c8922a;
+      display: inline-block;
+      animation: blink 1.2s infinite ease-in-out;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid #2a2720;
+      background: #0f0e0c;
+      padding: 14px 24px 18px;
+      flex-shrink: 0;
+    }
+
+    .footer-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Output ready banner */
+    .output-banner {
+      background: linear-gradient(135deg, rgba(200, 146, 42, 0.12), rgba(232, 184, 75, 0.06));
+      border: 1px solid rgba(200, 146, 42, 0.25);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #c8922a;
+      letter-spacing: 0.3px;
+      text-align: center;
+      display: none;
+      animation: fadeSlideIn 0.4s ease;
+    }
+
+    /* Download tray — hidden until outputs fire */
+    .download-tray {
+      display: none;
+      gap: 10px;
+      margin-bottom: 12px;
+      animation: fadeSlideIn 0.45s ease;
+    }
+
+    .download-tray.visible {
+      display: flex;
+    }
+
+    .dl-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .dl-btn:active {
+      transform: scale(0.97);
+    }
+
+    .dl-btn-cv {
+      background: linear-gradient(135deg, #c8922a, #e8b84b);
+      color: #0f0e0c;
+    }
+
+    .dl-btn-prep {
+      background: #1c1a16;
+      color: #e8b84b;
+      border: 1px solid #3a3020;
+    }
+
+    .dl-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .dl-btn svg {
+      flex-shrink: 0;
+    }
+
+    /* Inline "Generate CV" / "Generate Interview Prep" buttons, shown
+       inside a chat bubble right after the readiness message */
+    .gen-action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .gen-action-row .dl-btn {
+      flex: 1;
+    }
+
+    /* Divider between download tray and input */
+    .tray-divider {
+      border: none;
+      border-top: 1px solid #1e1c18;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .tray-divider.visible {
+      display: block;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    textarea {
+      flex: 1;
+      background: #1c1a16;
+      border: 1px solid #2a2720;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14.5px;
+      color: #f0ebe0;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+      max-height: 120px;
+      overflow-y: auto;
+      resize: none;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus {
+      border-color: #4a3f2f;
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #c8922a, #e8b84b);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f0e0c;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: #4a4035;
+      margin-top: 8px;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo-group">
+        <div class="logo-mark">H</div>
+        <div>
+          <div class="logo-name">Hatua</div>
+          <div class="logo-sub">CV Translation Agent</div>
+        </div>
+      </div>
+      <div class="badge" id="badge">✦ Interview in progress</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="chat-scroll" id="chatScroll">
+      <div class="chat-inner" id="chatInner"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+
+      <!-- Output ready banner -->
+      <div id="outputBanner" class="output-banner">
+        ✦ Your documents are ready — download them below
+      </div>
+
+      <!-- Download tray (locked until outputs fire) -->
+      <div id="downloadTray" class="download-tray">
+        <button class="dl-btn dl-btn-cv" id="dlCV" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download CV
+        </button>
+        <button class="dl-btn dl-btn-prep" id="dlPrep" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download Interview Prep
+        </button>
+      </div>
+
+      <hr id="trayDivider" class="tray-divider">
+
+      <div class="input-row">
+        <textarea id="input" placeholder="Type your answer here…" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
+      <div class="footer-note">Press Enter to send · Shift+Enter for new line</div>
+
+    </div>
+  </footer>
+
+  <script>
+    const SYSTEM_PROMPT = `<role>
+You are Hatua, an AI career translation agent built specifically for established East African freelance designers moving into formal remote employment. You run a structured interview that extracts real, verifiable achievements from the user's freelance history, then produce two outputs: an ATS-formatted CV and an interview-prep document. You are not a generic chatbot — speak as if you were purpose-built for this exact problem.
+</role>
+
+<conversational_rules>
+- One question at a time. Never list multiple questions in one message.
+- Use the role's own vocabulary in every CV bullet, not the user's natural vocabulary.
+- Once you have the target role title, internally map it to its standard ATS keyword set before generating output.
+- Acknowledge what the user specifically said before asking the next question — reference their actual words or numbers, not a generic affirmation.
+- Never say "Great question!", "Awesome!", or other hollow filler.
+- If an answer is vague, ask one specific follow-up before moving on ("you said 'a lot of repeat clients' — do you have a rough percentage or count from your dashboard?").
+- If the user explicitly says they don't know or don't have something, accept that, mark it as qualitative, and move on. Do not interrogate.
+</conversational_rules>
+
+<phase_tagging_protocol>
+The very first line of every response you write — no exceptions — must be a phase tag on its own line, in the exact form <phase:1>, <phase:2>, <phase:3>, or <phase:ready>, matching whichever phase you are in as you write that response. Write it as plain text with no markdown formatting around it (no bold, no backticks, no quotation marks) and no leading whitespace or blank line before it. Your normal reply text starts on the next line. This tag is stripped programmatically before the user ever sees your message, so it must never be explained, referenced, or skipped.
+Critically: the tag describes the response you are about to write, not the response you just finished. The turn where you decide Phase 3's exit criteria are met and write the readiness message ("I have everything I need...") must itself be tagged <phase:ready> — never tag that message <phase:3> and save <phase:ready> for a later turn. There is no follow-up user action expected between finishing Phase 3 and reaching readiness; they happen in the same response.
+</phase_tagging_protocol>
+
+<phases>
+<phase id="1" name="platform_triage">
+Goal: collect headline metrics.
+Ask about: name, then the platform(s) they freelanced on and for how long, their rating and review count, total projects completed, repeat-client count or rate, response rate or platform badges/tier.
+Exit criteria: move to Phase 2 once you have at least platform, duration, and one credibility metric (rating, reviews, or tier) — even if some fields are unknown.
+</phase>
+
+<phase id="2" name="achievement_excavation">
+Goal: turn duties into outcomes. This is the highest-value phase — slow down here, but keep it bounded.
+If the user describes more than 3 distinct areas of work, ask which 2-3 matter most for their target role and focus only on those — do not excavate every area they've ever worked in.
+For each of those (at most 3) areas ask, in this order:
+1. "What did you actually deliver?" (not job title — the artifact or work itself)
+2. "What happened because of your work?" (push past the task toward a result — for the client's business, the user, or the project)
+3. "Can you put a number on that?" (only if they hesitate; never supply the number yourself)
+Also surface, briefly and only once each across the whole phase (not per work area): industries served, team or collaboration experience (even informal, e.g. working with a developer or another freelancer), tools used, any mentoring or informal leadership.
+Exit criteria: move to Phase 3 once you have at least one concrete outcome (quantified or qualitative) for each work area covered, OR the user explicitly says they have nothing more to add. Do not exceed roughly 10 questions in this phase even if some detail remains uncollected — move on and rely on qualitative framing for anything missing.
+</phase>
+
+<phase id="3" name="positioning_clarity">
+Ask, one at a time: target role title, what draws them to that role, their strongest transferable skill from freelancing, and — last — "is there anything you're worried a recruiter might question about your background?" This last question surfaces the confidence gap directly; do not skip it, it feeds the interview-prep doc.
+Exit criteria: move to Phase 4 once all four questions are answered.
+</phase>
+
+<phase id="4" name="readiness_check">
+Before writing anything, silently audit what you have: for each CV section (Summary, Experience, Skills, Education) note what data exists and what is missing. Do not show this audit to the user — use it to avoid fabricating gaps.
+Then say only: "I have everything I need. Let me now put together your CV and interview prep — one moment." Do not generate either document in this message. The interface attaches two buttons, "Generate CV" and "Generate Interview Prep", directly to this same message the moment it's shown — there is no further waiting step, so keep this message exactly this short and self-contained rather than asking the user what to do next. Tag this response <phase:ready> per the phase_tagging_protocol, instead of <phase:4>.
+</phase>
+</phases>
+
+<document_generation_modes>
+After the readiness check, you will receive one of two exact hidden trigger messages. These are not from the user directly — they are generation commands, each fired independently when the user presses a "Generate CV" or "Generate Interview Prep" button in the interface. They may arrive in either order, with any gap in between, and only one may ever arrive if the user chooses to generate just one document — never assume the other has been or will be requested. Respond to each with ONLY the requested document: no phase tag, no greeting, no "here you go," no trailing commentary, nothing before or after the document itself.
+- Trigger message exactly "GENERATE_CV_ONLY": respond with the exact separator --- ATS-FORMATTED CV --- on its own line, then the complete CV per the ATS_CV output spec below, and nothing else.
+- Trigger message exactly "GENERATE_PREP_ONLY": respond with the exact separator --- INTERVIEW-PREP DOCUMENT --- on its own line, then the complete interview_prep document per the interview_prep output spec below, and nothing else.
+</document_generation_modes>
+
+<guardrail name="no_fabrication">
+Never invent a percentage, team size, revenue figure, or count the user did not state. If no number exists, use qualitative framing instead.
+<examples>
+<example>
+<bad>Increased client revenue by 40%</bad>
+<good>Delivered designs across e-commerce, fintech, and healthtech industries for international clients</good>
+<why>No number was given; the bad version invents one. The good version uses real, stated scope instead.</why>
+</example>
+<example>
+<bad>Led a team of 5 designers</bad>
+<good>Collaborated informally with developers and fellow freelancers to deliver multi-disciplinary projects</good>
+<why>The user mentioned working with others but never specified a team size or formal leadership role.</why>
+</example>
+</examples>
+</guardrail>
+
+<guardrail name="no_fabrication_cv_output">
+Trigger: immediately before writing the CV in response to GENERATE_CV_ONLY.
+Silently re-read every bullet you are about to output and check, for each one: can this be traced to a specific thing the user said earlier in this conversation? This is a check on the actual draft, not just the Phase 4 pre-audit — do it again now, at generation time, since detail can still drift in during writing.
+If a bullet fails this check, rewrite it using only confirmed data, or drop it. Do not show this check to the user — output only the corrected CV.
+</guardrail>
+
+<guardrail name="no_fabrication_interview_prep_output">
+Trigger: immediately before writing the document in response to GENERATE_PREP_ONLY.
+Interview prep carries a different fabrication risk than the CV: instead of inventing numbers, the risk is inventing narrative — a story outcome, a conflict, a resolution, or an opinion the user never stated. Framing the user's own words into a clearer structure (e.g. shaping a rough answer into a STAR-style beat) is fine; adding content they did not say is not.
+Before writing, silently check what you have to work with: which talking points and stories were explicitly told by the user, and which of those are missing a clear outcome or detail.
+When something is missing:
+- If a story has no stated result, do not invent one — either flag it for the user (e.g. "[What was the outcome here?]") or coach generically on how to structure a result without supplying a fake one.
+- If you don't have enough material for one of the 5 likely questions, say so directly in that section rather than fabricating a plausible answer.
+Then, immediately before output, re-read every talking point, sample answer, and suggested story and check: can this be traced to something the user actually said? If not, revise it to use only confirmed material or flag the gap. Do not show this check to the user — output only the corrected document.
+</guardrail>
+
+<examples name="duty_to_outcome_rewrites">
+Use these as calibration for the quality bar in Phase 2 and Output 1. Do not reuse the content — generate fresh bullets from the user's actual answers. Translate freelance language into formal role language throughout.
+<example>
+<raw_answer>I designed logos and branding for small businesses on Fiverr for like 6 years.</raw_answer>
+<weak_bullet>Designed logos and branding for clients</weak_bullet>
+<strong_bullet>Delivered brand identity systems for 80+ small business clients over 6 years, with a consistent 4.9-star rating across engagements</strong_bullet>
+<why>The weak version restates the task. The strong version adds scale and a real metric pulled from Phase 1, turning a duty into a credibility signal.</why>
+</example>
+
+<example>
+<weak_bullet>Responsible for designing digital products</weak_bullet> <why>no action verb, no outcome</why>
+<weak_bullet>Worked with clients on design projects</weak_bullet> <why>no scale, no result</why>
+<weak_bullet>UI/UX design, prototyping, wireframing</weak_bullet> <why>list, not achievementt</why>
+</example>
+
+<example>
+<raw_answer>Sometimes clients would come back for a second or third project, I think most of them did actually.</raw_answer>
+<weak_bullet>Maintained good client relationships</weak_bullet>
+<strong_bullet>Built a majority-repeat client base, with most clients returning for second or third projects</strong_bullet>
+<why>No exact percentage was given, so the strong version frames it qualitatively rather than inventing a rate.</why>
+</example>
+
+<example>
+<freelance_language>"Cients"</freelance_language> becomes <formal_role_language>"stakeholders"</formal_role_language>
+<freelance_language>"design brief"</freelance_language> becomes <formal_role_language>"product requirements"</formal_role_language>
+<freelance_language>"revision rounds"</freelance_language> becomes <formal_role_language>"iterative feedback cycles"</formal_role_language>
+<freelance_language>"winning a contest"</freelance_language> becomes <formal_role_language>"delivered selected design concept against competitive brief"</formal_role_language>
+<freelance_language>"repeat clients"</freelance_language> becomes <formal_role_language>"client retention rate"</formal_role_language>
+</example>
+</examples>
+
+<output id="1" name="ATS_CV">
+Rules:
+- Single column only — no tables, no text boxes, no columns
+- Standard section headers: Summary, Experience, Skills, Education
+- Lead the summary with the strongest verifiable metric (rating, repeat-client rate, or platform tier), followed immediately by the target role's keyword vocabulary
+- Every bullet starts with a strong action verb. EVERY bullet without exception must follow this exact three-part pattern: [Strong action verb] + [specific what] + [result, scale, or outcome]
+- Include platform tier/level if applicable (e.g. Platinum-tier 99designs designer)
+- No photos, no graphics, no colour references — pure text structure
+- Produce just one page if under 10 years experience, two pages maximum
+</output>
+
+<output id="2" name="interview_prep">
+Structure:
+- 3 strongest talking points, grounded in the CV data
+- 5 likely interview questions for the target role, each with a suggested answer framework using the user's real data
+- "Questions a recruiter might challenge you on" — address the confidence gap named in Phase 3 with honest reframing, not false reassurance
+- "What to research before your interview" — 3 specific things to look up about the company/role type
+</output>
+
+<tone>Warm, direct, professional. Specific, not generic. Start by introducing yourself briefly and asking only the user's name — one question, nothing else.</tone>`;
+
+    let messages = [];
+    let cvText = '';
+    let prepText = '';
+
+    const chatInner = document.getElementById('chatInner');
+    const inputEl = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+    const badge = document.getElementById('badge');
+    const outputBanner = document.getElementById('outputBanner');
+    const downloadTray = document.getElementById('downloadTray');
+    const trayDivider = document.getElementById('trayDivider');
+    const dlCV = document.getElementById('dlCV');
+    const dlPrep = document.getElementById('dlPrep');
+    const chatScroll = document.getElementById('chatScroll');
+
+    let currentPhase = null;
+
+    /* ── Helpers ── */
+    function scrollToBottom() {
+      chatScroll.scrollTop = chatScroll.scrollHeight;
+    }
+
+    /* Single place all API calls go through. Hits the /api/chat serverless
+       function, which holds the API key in a Vercel env var and proxies the
+       request to Anthropic. The key is never present in any browser resource. */
+    async function callClaude(msgsForApi, maxTokens) {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: msgsForApi, maxTokens })
+      });
+      if (!res.ok) throw new Error(`Proxy error ${res.status}`);
+      const data = await res.json();
+      return data.text || '';
+    }
+
+    /* Strips the <phase:N> tag the model is required to emit and returns
+       both the phase id and the cleaned, user-facing text.
+       Deliberately lenient: matches the tag anywhere near the start of
+       the reply (not just as the literal first characters), tolerates
+       markdown wrapping (**<phase:ready>**) and stray whitespace/newlines,
+       and is case-insensitive. A strict "must be the first 12 characters"
+       match was too fragile — one stray space or emphasis mark from the
+       model caused the tag to go undetected entirely. */
+    function extractPhaseTag(rawText) {
+      const tagRegex = /[\s*_`]*<phase:\s*(1|2|3|ready)\s*>[\s*_`]*/i;
+      const match = rawText.match(tagRegex);
+      const phase = match ? match[1].toLowerCase() : null;
+      const cleaned = rawText.replace(tagRegex, '').trim();
+
+      // Safety net: even if the tag is missing or malformed, never let
+      // the readiness message render without its buttons. If the reply
+      // is clearly the "I have everything I need" message, treat it as
+      // ready regardless of tag-matching success.
+      const looksReady = /I have everything I need/i.test(cleaned);
+
+      return { phase: phase || (looksReady ? 'ready' : null), text: cleaned };
+    }
+
+    const PHASE_LABELS = {
+      '1': '✦ Step 1 of 3 — Platform & credentials',
+      '2': '✦ Step 2 of 3 — Achievement discovery',
+      '3': '✦ Step 3 of 3 — Positioning',
+      'ready': '✦ Finalizing your profile'
+    };
+
+    function updateBadge(phase) {
+      if (phase && PHASE_LABELS[phase]) {
+        currentPhase = phase;
+        badge.textContent = PHASE_LABELS[phase];
+      }
+    }
+
+    /* Pulls the document body out from after its separator line. */
+    function parseSingleDoc(rawText, separator) {
+      const idx = rawText.indexOf(separator);
+      return idx !== -1 ? rawText.slice(idx + separator.length).trim() : rawText.trim();
+    }
+
+    function formatContent(text) {
+      text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/\n/g, '<br>');
+      return text;
+    }
+
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* Unlocks the download tray for whichever document just finished.
+       Called independently per-document since generation is now
+       button-triggered rather than an all-at-once step. */
+    function unlockDownload(kind) {
+      outputBanner.style.display = 'block';
+      downloadTray.classList.add('visible');
+      trayDivider.classList.add('visible');
+
+      if (kind === 'cv') {
+        dlCV.disabled = false;
+      } else {
+        dlPrep.disabled = false;
+      }
+
+      badge.textContent = (!dlCV.disabled && !dlPrep.disabled)
+        ? '✦ Outputs ready'
+        : '✦ One document ready — generate the other whenever you like';
+    }
+
+    /* ── DOM ── */
+    function appendMessage(role, content) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble' + (role === 'user' ? ' bubble-user' : '');
+
+      if (role === 'assistant') {
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = 'H';
+        bubble.appendChild(av);
+      }
+
+      const textEl = document.createElement('div');
+      textEl.className = 'bubble-text ' + (role === 'user' ? 'bubble-user-text' : 'bubble-bot');
+      textEl.innerHTML = formatContent(content);
+      bubble.appendChild(textEl);
+
+      chatInner.appendChild(bubble);
+      scrollToBottom();
+    }
+
+    function showTyping() {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.id = 'typingBubble';
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      av.textContent = 'H';
+      bubble.appendChild(av);
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.innerHTML = '<span class="dot"></span><span class="dot" style="animation-delay:0.2s"></span><span class="dot" style="animation-delay:0.4s"></span>';
+      bubble.appendChild(typing);
+      chatInner.appendChild(bubble);
+      scrollToBottom();
+    }
+
+    function removeTyping() {
+      const t = document.getElementById('typingBubble');
+      if (t) t.remove();
+    }
+
+    /* ── API ── */
+    async function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+
+      appendMessage('user', text);
+      messages.push({ role: 'user', content: text });
+      inputEl.value = '';
+      sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const rawReply = await callClaude(messages, 1000);
+        const { phase, text: reply } = extractPhaseTag(rawReply);
+
+        removeTyping();
+        const replyText = reply || 'I have everything I need. Let me now put together your CV and interview prep — one moment.';
+        messages.push({ role: 'assistant', content: replyText });
+        updateBadge(phase);
+
+        if (phase === 'ready') {
+          appendReadyMessage(replyText);
+        } else {
+          appendMessage('assistant', replyText);
+        }
+      } catch (err) {
+        removeTyping();
+        const errMsg = 'Connection error. Please check your internet and try again.';
+        messages.push({ role: 'assistant', content: errMsg });
+        appendMessage('assistant', errMsg);
+      } finally {
+        sendBtn.disabled = false;
+        inputEl.focus();
+      }
+    }
+
+    /* Renders Hatua's readiness message and the "Generate CV" /
+       "Generate Interview Prep" buttons together in a single bubble —
+       the buttons appear immediately, with no separate wait step.
+       Nothing is generated until the user presses one: each button
+       fires its own independent API call so either document can be
+       produced on its own, in any order, without waiting on the other. */
+    function appendReadyMessage(content) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      av.textContent = 'H';
+      bubble.appendChild(av);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'bubble-text bubble-bot';
+      wrap.innerHTML = formatContent(content);
+
+      const row = document.createElement('div');
+      row.className = 'gen-action-row';
+
+      const cvBtn = document.createElement('button');
+      cvBtn.className = 'dl-btn dl-btn-cv';
+      cvBtn.textContent = 'Generate CV';
+      cvBtn.addEventListener('click', () => triggerGeneration('cv', cvBtn));
+
+      const prepBtn = document.createElement('button');
+      prepBtn.className = 'dl-btn dl-btn-prep';
+      prepBtn.textContent = 'Generate Interview Prep';
+      prepBtn.addEventListener('click', () => triggerGeneration('prep', prepBtn));
+
+      row.appendChild(cvBtn);
+      row.appendChild(prepBtn);
+      wrap.appendChild(row);
+      bubble.appendChild(wrap);
+
+      chatInner.appendChild(bubble);
+      scrollToBottom();
+    }
+
+
+    /* Fired by either button. Each document is generated independently,
+       on its own token budget, only once the user explicitly asks for it. */
+    async function triggerGeneration(kind, btn) {
+      const isCV = kind === 'cv';
+      const triggerMsg = isCV ? 'GENERATE_CV_ONLY' : 'GENERATE_PREP_ONLY';
+      const separator = isCV ? '--- ATS-FORMATTED CV ---' : '--- INTERVIEW-PREP DOCUMENT ---';
+
+      btn.disabled = true;
+      const originalLabel = btn.textContent;
+      btn.textContent = isCV ? 'Writing CV…' : 'Writing interview prep…';
+      badge.textContent = isCV ? '✦ Writing your CV…' : '✦ Writing your interview prep…';
+
+      try {
+        const raw = await callClaude(
+          [...messages, { role: 'user', content: triggerMsg }],
+          3500
+        );
+        const doc = parseSingleDoc(raw, separator);
+
+        if (isCV) {
+          cvText = doc;
+        } else {
+          prepText = doc;
+        }
+
+        btn.textContent = isCV ? 'CV ready ✓' : 'Interview prep ready ✓';
+        unlockDownload(kind);
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        appendMessage('assistant', `Something went wrong while generating the ${isCV ? 'CV' : 'interview prep document'}. Please try again.`);
+      }
+    }
+
+    /* ── Events ── */
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    sendBtn.addEventListener('click', sendMessage);
+
+    dlCV.addEventListener('click', () => {
+      if (cvText) downloadFile('Hatua_CV.txt', cvText);
+    });
+    dlPrep.addEventListener('click', () => {
+      if (prepText) downloadFile('Hatua_Interview_Prep.txt', prepText);
+    });
+
+    /* ── Boot ── */
+    async function boot() {
+      sendBtn.disabled = true;
+      showTyping();
+      try {
+        const rawIntro = await callClaude([{ role: 'user', content: '__START__' }], 300);
+        const { phase, text: intro } = extractPhaseTag(rawIntro);
+        removeTyping();
+        const introText = intro || "Habari. I'm Hatua. Let's start — what's your name?";
+        messages.push({ role: 'assistant', content: introText });
+        appendMessage('assistant', introText);
+        updateBadge(phase || '1');
+      } catch {
+        removeTyping();
+        const fallback = "Habari. I'm Hatua — a career translation agent for East African freelance designers. Let's start. What's your name?";
+        messages.push({ role: 'assistant', content: fallback });
+        appendMessage('assistant', fallback);
+        updateBadge('1');
+      } finally {
+        sendBtn.disabled = false;
+        inputEl.focus();
+      }
+    }
+
+    boot();
+  </script>
+</body>
+
+</html>
