@@ -1,3 +1,5 @@
+# Hatua
+
 # AI Product Manager Portfolio Case Study
 
 ---
@@ -11,11 +13,11 @@ An AI agent that helps East African digital freelancers turn real platform proof
 **Timeline:** June – August 2026 (10 weeks)
 **Status:** 🟡 In Progress / 🟢 Shipped *(update as you go)*
 
-**Live demo link:** *(add when ready)*
+**Live demo link:** [Hatua CV App](https://hatuacv.vercel.app/)
 
-**GitHub repo:** Hatua Github repo
+**GitHub repo:** [Hatua Github repo](https://github.com/Gitush-prmt/Hatua)
 
-*(Hero image: a clean before/after CV screenshot works well here once you have one)*
+![Hatua App.png](Hatua_App.png)
 
 ---
 
@@ -208,12 +210,32 @@ Anne's case surfaced a second distinct user pattern during week 1 validation: th
 - Mwai’s reaction to the output: “There was a small but noticeable incidence of fabrication on the Interview Prep document”
     - *What I changed in response:*  Added two new `<guardrail>` blocks to the system prompt (inside the `SYSTEM_PROMPT` template literal), inserted right after the existing `no_fabrication` guardrail, before the `duty_to_outcome_rewrites` examples. 
     Hatua already had a *pre*-generation check for the CV
+    
+    | Does every bullet accurately represent work you actually did — anything you couldn't stand behind in an interview? | ✅ |
+    | --- | --- |
+    | Is there anything significant from your freelance history that the conversation didn't surface? | ❌ |
+    | Would you submit this CV to a real application tomorrow — and if not, what's the one thing stopping you? | ✅  |
 - Anne’s reaction to the output: “Too many question asked by Hatua. It seemed like the questions were never-ending”
     - *What I changed in response:* Added a soft ceiling of ~10 questions in every phase, with instructions to move on and use qualitative framing for anything still missing.
+    
+    | Does every bullet accurately represent work you actually did — anything you couldn't stand behind in an interview? | ✅ |
+    | --- | --- |
+    | Is there anything significant from your freelance history that the conversation didn't surface? | ❌ |
+    | Would you submit this CV to a real application tomorrow — and if not, what's the one thing stopping you? | ✅ |
 - Sunny’s reaction to the output: “The ‘What to Research Before Your Interview’ was an unexpected and pleasant addition to the Interview Prep document. This really helped in my preparation for my interview”
     - *What I changed in response:* Maintained the file as is. No change required. Additional features were maintained.
+    
+    | Does every bullet accurately represent work you actually did — anything you couldn't stand behind in an interview? | ✅ |
+    | --- | --- |
+    | Is there anything significant from your freelance history that the conversation didn't surface? | ❌ |
+    | Would you submit this CV to a real application tomorrow — and if not, what's the one thing stopping you? | ✅ |
 - Shari’s reaction to the output: “The summary section of the CV is doing its job, but the Skills section has mixed the tools with some role keywords. This, I suspect, is blocking ATS keyword parsing”
     - *What I changed in response:* Split the Skills section into two explicit subsections — role competencies first, tools second (the software list). Core Competencies comes first — this is the ATS keyword block, mapped directly to the user's target role, listing capabilities not tools. Tools & Platforms comes second — the actual software list. ATS parsers weight the competencies block heavily because it matches the keyword clusters recruiters build into their filters. Separating them means neither dilutes the other.
+    
+    | Does every bullet accurately represent work you actually did — anything you couldn't stand behind in an interview? | ✅ |
+    | --- | --- |
+    | Is there anything significant from your freelance history that the conversation didn't surface? | ❌ |
+    | Would you submit this CV to a real application tomorrow — and if not, what's the one thing stopping you? | ✅ |
 
 ### Security Considerations
 
