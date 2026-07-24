@@ -17,8 +17,6 @@ An AI agent that helps East African digital freelancers turn real platform proof
 
 **GitHub repo:** [Hatua Github repo](https://github.com/Gitush-prmt/Hatua)
 
-![Hatua App.png](Hatua_App.png)
-
 ---
 
 ## 1. The Problem
