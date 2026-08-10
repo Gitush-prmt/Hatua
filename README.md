@@ -1,7 +1,7 @@
 # Hatua
 ### AI career translation agent for East African freelance designers
 
-**Built by:** Gits Mwai — UI Designer / Certified Prompt Engineer / IBM Generative AI Engineering Professional
+**Built by:** Gituru Mwai — UI Designer / Certified Prompt Engineer / IBM Generative AI Engineering Professional
 **Timeline:** 10 weeks (June – August 2026)
 **Stack:** Claude API · React · Jobscan (ATS validation)
 **Live demo:** *(add link)*
@@ -71,5 +71,5 @@ Cover letters, LinkedIn rewrite, writing/dev disciplines, emerging freelancers, 
 ## Full case study
 
 The complete case study — problem framing, user research, five scope decisions with reasoning, prompt iteration log, evidence table, limitations, and reflection — is on Notion.
-
-**[Read the full case study →](#)** *(add Notion link)*
+[Read the full case study
+](https://app.notion.com/p/Hatua-386248c7214780feaa7dc027881dfdaa?source=copy_link)
