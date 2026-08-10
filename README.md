@@ -2,9 +2,13 @@
 ### AI career translation agent for East African freelance designers
 
 **Built by:** Gituru Mwai — UI Designer / Certified Prompt Engineer / IBM Generative AI Engineering Professional
+
 **Timeline:** 10 weeks (June – August 2026)
-**Stack:** Claude API · React · Jobscan (ATS validation)
-**Live demo:** *(add link)*
+
+**Stack:** Claude API · React · EnhanceCV (ATS validation)
+
+**Live demo:** *https://hatuacv.vercel.app/*
+
 **Full case study:** *(add Notion link)*
 
 ---
