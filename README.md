@@ -71,5 +71,6 @@ Cover letters, LinkedIn rewrite, writing/dev disciplines, emerging freelancers, 
 ## Full case study
 
 The complete case study — problem framing, user research, five scope decisions with reasoning, prompt iteration log, evidence table, limitations, and reflection — is on Notion.
+
 [Read the full case study
 ](https://app.notion.com/p/Hatua-386248c7214780feaa7dc027881dfdaa?source=copy_link)
