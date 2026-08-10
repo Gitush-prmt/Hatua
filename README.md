@@ -1,7 +1,7 @@
 # Hatua
 ### AI career translation agent for East African freelance designers
 
-**Built by:** Gituru Mwai — UI Designer / Certified Prompt Engineer / IBM Generative AI Engineering Professional
+**Built by:** Gituru Mwai — UX/UI Designer / AI UX Product Manager / Conversational AI PM
 
 **Timeline:** 10 weeks (June – August 2026)
 
@@ -13,7 +13,7 @@
 
 ---
 
-## The problem in one paragraph
+## The Problem
 
 Established East African freelance designers have real, verifiable track records — platform ratings, repeat-client rates, project volume — but no framework to translate that proof-of-work into language a formal remote employer trusts. The result: strong designers with 10+ years of experience receiving only silence or automated rejections, not because their skills are lacking, but because their CVs speak a different language than the recruiters and ATS systems screening them.
 
@@ -42,8 +42,6 @@ Hatua interviews a user conversationally about their freelance history and produ
 | Shari | 68% | 85% | +17 pts |
 | Sunny | 72% | 89% | +17 pts |
 | **Average** | **67.8%** | **86.8%** | **+19 pts** |
-
-*Measured via Jobscan free tier against each user's stated target role.*
 
 Every user confirmed every bullet was accurate — nothing they couldn't defend in an interview.
 When asked *"Would you submit this CV to a real application tomorrow?"* — all six said yes.
