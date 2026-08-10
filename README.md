@@ -58,6 +58,7 @@ A user whose freelance history maps tightly onto their target role scores higher
 ## What I didn't build (and why)
 
 Cover letters, LinkedIn rewrite, writing/dev disciplines, emerging freelancers, practice-interview simulation — all explicitly deferred to v1.5 or v2. 
+
 Five scope decisions were made during planning, each documented with explicit reasoning. The full decision trail is in the [case study](https://app.notion.com/p/Hatua-386248c7214780feaa7dc027881dfdaa?source=copy_link).
 
 ---
