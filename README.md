@@ -9,7 +9,7 @@
 
 **Live demo:** *https://hatuacv.vercel.app/*
 
-**Full case study:** *(add Notion link)*
+**Full case study:** *https://app.notion.com/p/Hatua-386248c7214780feaa7dc027881dfdaa?source=copy_link*
 
 ---
 
